@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>drag-move-demo</title>
+    <script src="vue.min.js" type="text/javascript"></script>
+    <script src="../index.js" type="text/javascript"></script>
+    <style>
+        .app {
+            margin: auto;
+        }
+        .list {
+            background: #eee;
+            padding: 3px;
+            margin: 5px;
+            width: 100%;
+        }
+        .testv {
+            background: #39f;
+            color: #fff;
+        }
+        .testh {
+            background: #f93;
+            color: #fff;
+        }
+        .testvh {
+            background: #3f9;
+            color: #fff;
+        }
+        .flexv {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .flexh {
+            display: flex;
+        }
+        .flexvh {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .flexvh .list {
+            width: 20%;
+        }
+    </style>
+</head>
+<body>
+<div style="height:1000px"></div>
+    <div class="app">
+        <div>竖向拖拽位置交换</div>
+        <div v-drag-move="dragDataV" class="flexv">
+            <div v-for="k in vlist" class="list">{{k}}</div>
+        </div>
+        <div>横向拖拽位置交换</div>
+        <div v-drag-move="dragDataH" class="flexh">
+            <div v-for="k in hlist" class="list">{{k}}</div>
+        </div>
+        <div>横竖向拖拽位置交换</div>
+        <div v-drag-move="dragDataVH" class="flexvh">
+            <div v-for="k in vhlist" class="list">{{k}}</div>
+        </div>
+    </div>
+    <script>
+        Vue.use(ccDirective.dragMove);
+
+        let app = new Vue({
+            el: '.app',
+            data: {
+                vlist: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                hlist: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                vhlist: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            },
+            methods: {
+                dragDataV: function() {
+                  return {
+                      onChange: (cb) => {
+                        this.vlist = cb(this.vlist);
+                      },
+                      activeClass: 'testv',
+                      direction: 'v',
+                      offsetY: 5,
+                      zIndex: 9
+                  }
+                },
+                dragDataH: function() {
+                    return {
+                        onChange: (cb) => {
+                            this.hlist = cb(this.hlist);
+                        },
+                        activeClass: 'testh',
+                        direction: 'h',
+                        offsetX: 5,
+                        zIndex: 10,
+                    }
+                },
+                dragDataVH: function() {
+                    return {
+                        onChange: (cb) => {
+                            this.vhlist = cb(this.vhlist);
+                        },
+                        activeClass: 'testvh',
+                        direction: 'vh',
+                        offsetX: 5,
+                        offsetY: 5,
+                        zIndex: 10,
+                    }
+                },
+            }
+        })
+    </script>
+</body>
+</html>
