@@ -42,21 +42,34 @@ function getMargin(dom) {
     }
 }
 
+function noop() {
+    return {
+        static: true
+    }
+}
+
 function dragMove(Vue) {
     Vue.directive('drag-move', {
         bind: function(el, binding) {
-            if(typeof binding.value !== 'function') return;
+            let ops = '';
+            if(!binding.value) ops = noop();
+            if(typeof binding.value === 'function') ops = binding.value();
+            if(typeof binding.value === 'object') ops = binding.value;
+            if(!ops) return;
             let options = Object.assign({
                     direction: 'v',
                     offsetY: 0,
+                    static: false,
                     offsetX: 0,
                     activeClass: '',
                     zIndex: 9
-                }, binding.value());
+                }, ops);
             let targetIndex = 0, sourceIndex = 0, nIndex = 0, doms, node, height, width, x, y, tp, lt, target, cc, ob = [];
             let min = 9999999, max = -9999999;
             el.addEventListener('mousedown', function(e) {
                 if(['SELECT', 'INPUT', 'TEXTAREA'].indexOf(e.target.nodeName) > -1) return;
+                min = 999999;
+                max = -999999;
                 doms = [].slice.call(el.children);
                 ob = [];
                 target = null;
@@ -87,6 +100,7 @@ function dragMove(Vue) {
                         lt = offsetLeft(dom) - scrollLeft(el);
                         cc = document.createElement('div');
                         cc.style.cssText = `overflow:hidden;position:absolute;top:${tp}px;width:${dom.offsetWidth+mg.left}px;z-index:${options.zIndex};left:${offsetLeft(dom)}px;margin-left:-${mg.left}px;margin-top:-${mg.top}px`;
+                        node.style.width = '100%';
                         node.style.margin = getComputedStyle(dom).margin;
                         cc.appendChild(node);
                         dom.style.cssText = `visibility:hidden`;
@@ -230,14 +244,26 @@ function dragMove(Vue) {
                         dom.style.transform = '';
                         dom.style.transitionDuration = '';
                     });
+                    if(options.static) {
+                        if(options.direction === 'v' || options.direction === 'h') {
+                            change(targetIndex, sourceIndex, doms);
+                        }
+                        let frag = document.createDocumentFragment();
+                        doms.forEach(dom => frag.appendChild(dom));
+                        el.appendChild(frag);
+                    }
                     if(typeof options.onChange === 'function') {
-                        options.onChange(function(data) {
-                            if(!data instanceof Array) return data;
-                            if(sourceIndex === targetIndex) return data;
-                            data = JSON.parse(JSON.stringify(data));
-                            change(targetIndex, sourceIndex, data);
-                            return data;
-                        }, targetIndex, sourceIndex);
+                        if(options.static) {
+                            options.onChange(targetIndex, sourceIndex);
+                        } else {
+                            options.onChange(function(data) {
+                                if(!data instanceof Array) return data;
+                                if(sourceIndex === targetIndex) return data;
+                                data = JSON.parse(JSON.stringify(data));
+                                change(targetIndex, sourceIndex, data);
+                                return data;
+                            }, targetIndex, sourceIndex);
+                        }
                     }
                 }, 300);
                 document.removeEventListener('mousemove', move);

@@ -41,21 +41,175 @@
         .flexvh .list {
             width: 20%;
         }
+        .code {
+            background: #eee;
+        }
+        table td {
+            border: 1px solid #666;
+            padding: 3px 5px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        .staticv {
+            background: #eee;
+            margin: 5px;
+        }
+        .statich {
+            background: #eee;
+            display: inline-block;
+            width: 50px;
+            margin: 5px;
+        }
+        .staticvh {
+            background: #eee;
+            display: inline-block;
+            width: 30%;
+        }
     </style>
 </head>
 <body>
     <div class="app">
-        <div>竖向拖拽位置交换</div>
+        <pre v-pre class="code">
+            由v-for生成的拖拽内容
+            &lt;div v-drag-move="dragData"&gt;
+                &lt;div v-for="k in list"&gt;{{k}}&lt;/div&gt;
+            &lt;/div&gt;
+            new Vue({
+                el: '.app',
+                data: {
+                    list: [1,2,3,4,5]
+                },
+                methods: {
+                    dragData() {
+                        return {
+                            direction: 'v',
+                            offsetX: 0,
+                            offsetY: 0,
+                            zIndex: 9,
+                            activeClass: '',
+                            static: false,
+                            onChange: (cb, tagIndex, srcIndex) => {
+                                this.list = cb(this.list);
+                            }
+                        }
+                    }
+                }
+            });
+            非v-for的拖拽内容，可以不提供对象或返回对象的函数而直接使用指令，会使用默认值
+            &lt;div v-drag-move="{static:true,direction:'v'}"&gt;
+                &lt;div&gt;1&lt;/div&gt;
+                &lt;div&gt;2&lt;/div&gt;
+                ...
+            &lt;/div&gt;
+            或
+            &lt;div v-drag-move&gt;
+                &lt;div&gt;1&lt;/div&gt;
+                &lt;div&gt;2&lt;/div&gt;
+                ...
+            &lt;/div&gt;
+            new Vue({
+                el: '.app',
+                data: {
+                    list: [1,2,3,4,5]
+                },
+                methods: {
+                    dragData() {
+                        return {
+                            direction: 'v',
+                            offsetX: 0,
+                            offsetY: 0,
+                            zIndex: 9,
+                            activeClass: '',
+                            static: true,
+                            onChange: (tagIndex, srcIndex) => {
+                                ...
+                            }
+                        }
+                    }
+                }
+            });
+            指令v-drag-move，接收对象或返回对象的函数，也可以只使用指令不传任何值
+            <table cellspacing="0">
+                <thead>
+                    <tr>
+                        <td>属性</td>
+                        <td>值</td>
+                        <td>说明</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>direction</td>
+                        <td>'v' | 'h' | 'vh'，默认值'v'</td>
+                        <td>拖拽方向。'v'竖向, 'h'横向, 'vh'横竖向</td>
+                    </tr>
+                    <tr>
+                        <td>activeClass</td>
+                        <td>默认值''</td>
+                        <td>拖拽激活时的激活css类</td>
+                    </tr>
+                <tr>
+                        <td>offsetX</td>
+                        <td>默认值0</td>
+                        <td>横向偏移量</td>
+                    </tr>
+                <tr>
+                        <td>offsetY</td>
+                        <td>默认值0</td>
+                        <td>竖向偏移量</td>
+                    </tr>
+                    <tr>
+                        <td>zIndex</td>
+                        <td>默认值9</td>
+                        <td>报拽层的堆叠顺序</td>
+                    </tr>
+                    <tr>
+                        <td>static</td>
+                        <td>默认值false。当没有给指令提供函数时默认值为true。</td>
+                        <td>非v-for生成的拖拽内容需要指定为true</td>
+                    </tr>
+                <tr>
+                        <td>onChange</td>
+                        <td>当static为true时，参数tagIndex目标索引, srcIndex源索引</BR>当static为false时，参数cb交换函数, tagIndex目标索引, srcIndex源索引。</BR>cb交换函数，接受一个参数即v-for绑定的数据数组，并返回一个新的交换后的数据数组</td>
+                        <td>位置交换成功后的回调函数。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </pre>
+        <h3>由v-for动态生成的内容</h3>
+        <div>竖向</div>
         <div v-drag-move="dragDataV" class="flexv">
             <div v-for="k in vlist" class="list">{{k}}</div>
         </div>
-        <div>横向拖拽位置交换</div>
+        <div>横向</div>
         <div v-drag-move="dragDataH" class="flexh">
             <div v-for="k in hlist" class="list">{{k}}</div>
         </div>
-        <div>横竖向拖拽位置交换</div>
+        <div>横竖向</div>
         <div v-drag-move="dragDataVH" class="flexvh">
             <div v-for="k in vhlist" class="list">{{k}}</div>
+        </div>
+        <h3>非v-for的静态内容，static属性必须设置为true</h3>
+        <div>竖向</div>
+        <div v-drag-move>
+            <div class="staticv">1</div>
+            <div class="staticv">2</div>
+            <div class="staticv">3</div>
+        </div>
+        <div>横向</div>
+        <div v-drag-move="{direction: 'h', static: true, offsetX: 5}">
+            <div class="statich">1</div>
+            <div class="statich">2</div>
+            <div class="statich">3</div>
+        </div>
+        <div>横竖向</div>
+        <div v-drag-move="{direction: 'vh', static: true, offsetX: 5}">
+            <div class="staticvh">1</div>
+            <div class="staticvh">2</div>
+            <div class="staticvh">3</div>
+            <div class="staticvh">4</div>
+            <div class="staticvh">5</div>
         </div>
     </div>
     <script>
