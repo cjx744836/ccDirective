@@ -1,5 +1,7 @@
-import dragMove from './drag-move';
+import ccDrag from './cc-drag';
+import ccAnchor from './cc-anchor';
 
 export {
-    dragMove
+    ccAnchor,
+    ccDrag
 }

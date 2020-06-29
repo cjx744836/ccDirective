@@ -42,20 +42,13 @@ function getMargin(dom) {
     }
 }
 
-function noop() {
-    return {
-        static: true
-    }
-}
-
-function dragMove(Vue) {
-    Vue.directive('drag-move', {
+function ccDrag(Vue) {
+    Vue.directive('cc-drag', {
         bind: function(el, binding) {
             let ops = '';
-            if(!binding.value) ops = noop();
             if(typeof binding.value === 'function') ops = binding.value();
-            if(typeof binding.value === 'object') ops = binding.value;
-            if(!ops) return;
+            else if(typeof binding.value === 'object') ops = binding.value;
+            else ops = {static: true};
             let options = Object.assign({
                     direction: 'v',
                     offsetY: 0,
@@ -64,8 +57,7 @@ function dragMove(Vue) {
                     activeClass: '',
                     zIndex: 9
                 }, ops);
-            let targetIndex = 0, sourceIndex = 0, nIndex = 0, doms, node, height, width, x, y, tp, lt, target, cc, ob = [];
-            let min = 9999999, max = -9999999;
+            let targetIndex = 0, sourceIndex = 0, nIndex = 0, doms, node, height, width, x, y, tp, lt, target, cc, ob = [], min, max;
             el.addEventListener('mousedown', function(e) {
                 if(['SELECT', 'INPUT', 'TEXTAREA'].indexOf(e.target.nodeName) > -1) return;
                 min = 999999;
@@ -273,4 +265,4 @@ function dragMove(Vue) {
     })
 }
 
-export default dragMove;
+export default ccDrag;
