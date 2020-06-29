@@ -1,3 +1,4 @@
 个人Vue自定义指令集合
 
-* v-drag-move 拖拽位置交位，<a href="https://cjx744836.github.io/ccDirective/demo/drag-move-demo.html" target="_blank" rel="noopener">Demo演示</a>
+* v-cc-drag 拖拽位置交位 [demo演示](https://cjx744836.github.io/ccDirective/demo/cc-drag-demo.html)
+* v-cc-anchor 锚点滚动 [demo演示](https://cjx744836.github.io/ccDirective/demo/cc-anchor-demo.html)
