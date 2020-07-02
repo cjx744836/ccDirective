@@ -49,7 +49,7 @@ function animate(ops) {
 function ccAnchor(Vue) {
     Vue.directive('cc-anchor', {
        bind(el, binding, vnode) {
-           let doms, options, index, key = '$anchor', isGoto, tp = 0, offset = 0;
+           let doms, options, index, key = '$anchor', tp = 0, offset = 0;
            doms = [].slice.call(el.children);
            options = {
                offset: 0,
@@ -99,7 +99,6 @@ function ccAnchor(Vue) {
            }
            function goto(i) {
                index = i;
-               isGoto = true;
                options.target.removeEventListener('scroll', fn);
                if(!options.animation) {
                    options.target.scrollTo(0, offsetTop(doms[i]) + options.offset - offset);
