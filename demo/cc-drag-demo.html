@@ -74,34 +74,35 @@
 </head>
 <body>
     <div class="app">
+        <button @click="allowDrag">{{!disabled ? '禁止拖动' : '允许拖动'}}</button>
         <h3>由v-for动态生成的内容</h3>
         <div>竖向</div>
-        <div v-cc-drag="dragDataV" class="flexv">
+        <div v-cc-drag:[disabled]="dragDataV" class="flexv">
             <div v-for="k in vlist" class="list">{{k}}</div>
         </div>
         <div>横向</div>
-        <div v-cc-drag="dragDataH" class="flexh">
+        <div v-cc-drag:[disabled]="dragDataH" class="flexh">
             <div v-for="k in hlist" class="list">{{k}}</div>
         </div>
         <div>横竖向</div>
-        <div v-cc-drag="dragDataVH" class="flexvh">
+        <div v-cc-drag:[disabled]="dragDataVH" class="flexvh">
             <div v-for="k in vhlist" class="list">{{k}}</div>
         </div>
         <h3>非v-for的静态内容，static属性必须设置为true</h3>
         <div>竖向</div>
-        <div v-cc-drag>
+        <div v-cc-drag:[disabled]>
             <div class="staticv">1</div>
             <div class="staticv">2</div>
             <div class="staticv">3</div>
         </div>
         <div>横向</div>
-        <div v-cc-drag="{direction: 'h', static: true, offsetX: 5}">
+        <div v-cc-drag:[disabled]="{direction: 'h', static: true, offsetX: 5}">
             <div class="statich">1</div>
             <div class="statich">2</div>
             <div class="statich">3</div>
         </div>
         <div>横竖向</div>
-        <div v-cc-drag="{direction: 'vh', static: true, offsetX: 5, offsetY: 5}">
+        <div v-cc-drag:[disabled]="{direction: 'vh', static: true, offsetX: 5, offsetY: 5}">
             <div class="staticvh">1</div>
             <div class="staticvh">2</div>
             <div class="staticvh">3</div>
@@ -116,6 +117,7 @@
             new Vue({
                 ...
                 data: {
+                    disabled: false,
                     list: [1,2,3,4,5]
                 },
                 methods: {
@@ -162,6 +164,7 @@
             });
                     </pre>
         <div>v-cc-drag指令，接受一个对象或返回对象的函数或空。对象属性如下：</div>
+        <div>v-cc-drag指令动态参数可以禁止或允许拖动，v-cc-drag:[disabled]</div>
         <table cellspacing="0">
             <thead>
             <tr>
@@ -215,11 +218,15 @@
         let app = new Vue({
             el: '.app',
             data: {
+                disabled: false,
                 vlist: [1, 2, 3, 4, 5],
                 hlist: [1, 2, 3, 4, 5],
                 vhlist: [1, 2, 3, 4, 5]
             },
             methods: {
+                allowDrag: function() {
+                    this.disabled = !this.disabled;
+                },
                 dragDataV: function() {
                   return {
                       onChange: (cb) => {

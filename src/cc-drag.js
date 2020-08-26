@@ -43,12 +43,17 @@ function getMargin(dom) {
 }
 
 function ccDrag(Vue) {
+    let disabled = false;
     Vue.directive('cc-drag', {
+        update: function(el, binding) {
+            disabled = binding.arg;
+        },
         bind: function(el, binding) {
             let ops = '';
             if(typeof binding.value === 'function') ops = binding.value();
             else if(typeof binding.value === 'object') ops = binding.value;
             else ops = {static: true};
+            disabled = binding.arg;
             let options = Object.assign({
                     direction: 'v',
                     offsetY: 0,
@@ -59,7 +64,7 @@ function ccDrag(Vue) {
                 }, ops);
             let targetIndex = 0, sourceIndex = 0, nIndex = 0, doms, node, height, width, x, y, tp, lt, target, cc, ob = [], min, max;
             el.addEventListener('mousedown', function(e) {
-                if(['SELECT', 'INPUT', 'TEXTAREA'].indexOf(e.target.nodeName) > -1) return;
+                if(['SELECT', 'INPUT', 'TEXTAREA'].indexOf(e.target.nodeName) > -1 || disabled) return;
                 min = 999999;
                 max = -999999;
                 doms = [].slice.call(el.children);
